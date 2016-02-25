@@ -10,7 +10,9 @@ var snakeHead; //head of snake sprite
 var snakeSection = new Array(); //array of sprites that make the snake body sections
 var snakePath = new Array(); //arrary of positions(points) that have to be stored for the path the sections follow
 var numSnakeSections = 3; //number of snake body sections
-var snakeSpacer = 6; //parameter that sets the spacing between sections
+var snakeSpacer = 3; //parameter that sets the spacing between sections
+var scaleX = 0.7;
+var scaleY = 0.7;
 
 function create() {
 
@@ -21,7 +23,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
 
     snakeHead = game.add.sprite(400, 300, 'head');
-    snakeHead.scale.setTo(0.4,0.4);
+    snakeHead.scale.setTo(scaleX,scaleY);
     snakeHead.anchor.setTo(0.5, 0.5);
 
     game.physics.enable(snakeHead, Phaser.Physics.ARCADE);
@@ -30,7 +32,7 @@ function create() {
     for (var i = 1; i <= numSnakeSections-1; i++)
     {
         snakeSection[i] = game.add.sprite(400, 300, 'body');
-        snakeSection[i].scale.setTo(0.4,0.4);
+        snakeSection[i].scale.setTo(scaleX,scaleY);
         snakeSection[i].anchor.setTo(0.5, 0.5);
     }
     
@@ -39,16 +41,16 @@ function create() {
     {
         snakePath[i] = new Phaser.Point(400, 300);
     }
+	snakeHead.bringToTop();
 
 }
 
 function update() {
 
-    snakeHead.body.velocity.setTo(0, 0);
-    snakeHead.body.angularVelocity = 0;
-
-    if (cursors.up.isDown)
-    {
+    //snakeHead.body.velocity.setTo(0, 0);
+	//snakeHead.bringToTop();
+    //if (cursors.up.isDown)
+    //{
         snakeHead.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(snakeHead.angle, 300));
 
         // Everytime the snake head moves, insert the new location at the start of the array, 
@@ -65,7 +67,7 @@ function update() {
             snakeSection[i].x = (snakePath[i * snakeSpacer]).x;
             snakeSection[i].y = (snakePath[i * snakeSpacer]).y;
         }
-    }
+    //}
 
     if (cursors.left.isDown)
     {
@@ -75,6 +77,10 @@ function update() {
     {
         snakeHead.body.angularVelocity = 300;
     }
+	else
+	{
+	    snakeHead.body.angularVelocity = 0;
+	}
 
 }
 
