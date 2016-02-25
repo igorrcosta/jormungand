@@ -3,6 +3,8 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'jormungand', { preload: pre
 function preload() {
     game.load.image('head','assets/circle_head.png');
     game.load.image('body','assets/circle.png');
+	game.load.image('head_s','assets/circle_head_small.png');
+    game.load.image('body_s','assets/circle_small.png');
 	game.load.image('tile','assets/tile.png');
 
 }
@@ -24,7 +26,7 @@ function create() {
 	tilesprite = game.add.tileSprite(0, 0, 2400, 1800, 'tile');
     cursors = game.input.keyboard.createCursorKeys();
 
-    snakeHead = game.add.sprite(400, 300, 'head');
+    snakeHead = game.add.sprite(400, 300, 'head_s');
     snakeHead.scale.setTo(scaleX,scaleY);
     snakeHead.anchor.setTo(0.5, 0.5);
 
@@ -33,7 +35,7 @@ function create() {
     //  Init snakeSection array
     for (var i = 1; i <= numSnakeSections-1; i++)
     {
-        snakeSection[i] = game.add.sprite(400, 300, 'body');
+        snakeSection[i] = game.add.sprite(400, 300, 'body_s');
         snakeSection[i].scale.setTo(scaleX,scaleY);
         snakeSection[i].anchor.setTo(0.5, 0.5);
     }
