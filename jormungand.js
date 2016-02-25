@@ -3,6 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'jormungand', { preload: pre
 function preload() {
     game.load.image('head','assets/circle_head.png');
     game.load.image('body','assets/circle.png');
+	game.load.image('tile','assets/tile.png');
 
 }
 
@@ -18,8 +19,9 @@ function create() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    game.world.setBounds(0, 0, 800, 600);
-
+    //game.world.setBounds(0, 0, 800, 600);
+	game.world.setBounds(0, 0, 2400, 1800);
+	tilesprite = game.add.tileSprite(0, 0, 2400, 1800, 'tile');
     cursors = game.input.keyboard.createCursorKeys();
 
     snakeHead = game.add.sprite(400, 300, 'head');
@@ -42,32 +44,30 @@ function create() {
         snakePath[i] = new Phaser.Point(400, 300);
     }
 	snakeHead.bringToTop();
+	game.camera.follow(snakeHead, Phaser.Camera.FOLLOW_LOCKON);
+	snakeHead.body.collideWorldBounds = true;
 
 }
 
 function update() {
 
-    //snakeHead.body.velocity.setTo(0, 0);
-	//snakeHead.bringToTop();
-    //if (cursors.up.isDown)
-    //{
-        snakeHead.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(snakeHead.angle, 300));
+	
+	snakeHead.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(snakeHead.angle, 300));
 
-        // Everytime the snake head moves, insert the new location at the start of the array, 
-        // and knock the last position off the end
+	// Everytime the snake head moves, insert the new location at the start of the array, 
+	// and knock the last position off the end
 
-        var part = snakePath.pop();
+	var part = snakePath.pop();
 
-        part.setTo(snakeHead.x, snakeHead.y);
+	part.setTo(snakeHead.x, snakeHead.y);
 
-        snakePath.unshift(part);
+	snakePath.unshift(part);
 
-        for (var i = 1; i <= numSnakeSections - 1; i++)
-        {
-            snakeSection[i].x = (snakePath[i * snakeSpacer]).x;
-            snakeSection[i].y = (snakePath[i * snakeSpacer]).y;
-        }
-    //}
+	for (var i = 1; i <= numSnakeSections - 1; i++)
+	{
+		snakeSection[i].x = (snakePath[i * snakeSpacer]).x;
+		snakeSection[i].y = (snakePath[i * snakeSpacer]).y;
+	}
 
     if (cursors.left.isDown)
     {
