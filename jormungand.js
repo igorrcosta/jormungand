@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'jormungand', { preload: preload, create: create, update: update,render : render });
+var game = new Phaser.Game(600, 600, Phaser.CANVAS, 'jormungand', { preload: preload, create: create, update: update,render : render });
 
 function preload() {
     game.load.image('head','assets/circle_head.png');
@@ -15,8 +15,8 @@ var snakePath = new Array(); //arrary of positions(points) that have to be store
 var numSnakeSections = 3; //number of snake body sections
 var scaleX = 0.7;
 var scaleY = 0.7;
-var speed = 11;
-var snakeSpacer = 90/speed; //15; //parameter that sets the spacing between sections
+var speed = 5;
+var snakeSpacer = 5; //parameter that sets the spacing between sections
 //var n = 1;
 
 function create() {
@@ -40,11 +40,11 @@ function create() {
         snakeSection[i] = game.add.sprite(400+(snakeHead.height*i), 300, 'body_s');
         snakeSection[i].scale.setTo(scaleX,scaleY);
         snakeSection[i].anchor.setTo(0.5, 0.5);
-		game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
+		//game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
     }
     
     //  Init snakePath array
-    for (var i = 0; i <= snakeSpacer; i++)
+    for (var i = 0; i <= snakeSpacer*numSnakeSections; i++)
     {
         snakePath[i] = new Phaser.Point(400, 300);
     }
@@ -71,17 +71,17 @@ function update() {
 	part.setTo(snakeHead.x, snakeHead.y);
 
 	snakePath.unshift(part);
-	game.physics.arcade.moveToObject(snakeSection[1], snakeHead, speed*60);
+	//game.physics.arcade.moveToObject(snakeSection[1], snakeHead, speed*60);
 	//console.log(snakeSection[1].y, snakeSection[2].y);
-	for (var i = 2; i <= numSnakeSections - 1; i++)
+	for (var i = 1; i <= numSnakeSections - 1; i++)
 	{
-		section = snakeSection[i];
-		previous = snakeSection[i-1];
+		//section = snakeSection[i];
+		//previous = snakeSection[i-1];
 		//console.log(i);
 		//console.log(section.y, previous.velocity);
-		game.physics.arcade.moveToObject(section, previous, speed*60)
-		//snakeSection[i].x = snakePath[i*Math.floor(snakeSpacer/numSnakeSections)].x;
-		//snakeSection[i].y = snakePath[i*Math.floor(snakeSpacer/numSnakeSections)].y;
+		//game.physics.arcade.moveToObject(section, previous, speed*60)
+		snakeSection[i].x = snakePath[i*snakeSpacer].x;
+		snakeSection[i].y = snakePath[i*snakeSpacer].y;
 	}
     if (cursors.left.isDown)
     {
