@@ -16,6 +16,7 @@ var numSnakeSections = 3; //number of snake body sections
 var snakeSpacer = 3; //parameter that sets the spacing between sections
 var scaleX = 0.7;
 var scaleY = 0.7;
+var speed = 100;
 
 function create() {
 
@@ -54,7 +55,7 @@ function create() {
 function update() {
 
 	
-	snakeHead.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(snakeHead.angle, 300));
+	snakeHead.body.velocity.copyFrom(game.physics.arcade.velocityFromAngle(snakeHead.angle, speed));
 
 	// Everytime the snake head moves, insert the new location at the start of the array, 
 	// and knock the last position off the end
