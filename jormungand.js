@@ -1,11 +1,12 @@
 var game = new Phaser.Game(600, 600, Phaser.CANVAS, 'jormungand', { preload: preload, create: create, update: update,render : render });
 
 function preload() {
-    game.load.image('head','assets/circle_head.png');
-    game.load.image('body','assets/circle.png');
+    //game.load.image('head','assets/circle_head.png');
+    //game.load.image('body','assets/circle.png');
 	game.load.image('head_s','assets/circle_head_small.png');
     game.load.image('body_s','assets/circle_small.png');
 	game.load.image('tile','assets/tile.png');
+	game.load.image('food','assets/food.png');
 }
 
 var snakeHead;
@@ -17,6 +18,7 @@ var scaleY = scaleX;
 var speed = 3; //2-5
 var ang_speed = 200 //200-600
 var snakeSpacer = 5; //5-15
+var maxSnakeSections = 1000;
 //scale / speed / spacer
 //	 /  2 /  3 / 4 / 5
 //1.0/ 15 / 10 / 7 / 6
@@ -25,10 +27,10 @@ var snakeSpacer = 5; //5-15
 //0.3/  4 /  3 / 3 / 2
 
 function create() {
-
+	
     game.physics.startSystem(Phaser.Physics.ARCADE);
-    //game.world.setBounds(0, 0, 800, 600);
-	game.world.setBounds(0, 0, 2400, 1800);
+    game.world.setBounds(0, 0, 600, 600);
+	//game.world.setBounds(0, 0, 2400, 1800);
 	tilesprite = game.add.tileSprite(0, 0, 2400, 1800, 'tile');
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -37,25 +39,28 @@ function create() {
     snakeHead.anchor.setTo(0.5, 0.5);
     game.physics.enable(snakeHead, Phaser.Physics.ARCADE);
 	game.camera.follow(snakeHead, Phaser.Camera.FOLLOW_LOCKON);
-	
-    for (var i = 1; i <= numSnakeSections-1; i++)
+	//snakeBody = game.add.group();
+
+    for (var i = 0; i <= numSnakeSections; i++)
     {
-        snakeSection[i] = game.add.sprite(400+(snakeHead.height*i), 300, 'body_s');
+        snakeSection[i] = game.add.sprite(snakeHead.x, snakeHead.y, 'body_s');
         snakeSection[i].scale.setTo(scaleX,scaleY);
         snakeSection[i].anchor.setTo(0.5, 0.5);
-		//game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
+		game.physics.enable(snakeSection[i], Phaser.Physics.ARCADE);
     }
-    for (var i = 0; i <= snakeSpacer*numSnakeSections; i++)
+    for (var i = 0; i <= snakeSpacer*maxSnakeSections; i++)
     {
-        snakePath[i] = new Phaser.Point(400, 300);
+        snakePath[i] = new Phaser.Point(snakeHead.x, snakeHead.y);
     }
-	
+	foodPool = game.add.group();
+	createFood(1);
 	snakeHead.bringToTop();
 }
 
 function update() {
 	if (snakeHead.alive)
 	{
+		game.physics.arcade.overlap(snakeHead, foodPool, eat);
 		moveHead();	
 		moveBody();
 		if (cursors.left.isDown)
@@ -74,6 +79,38 @@ function update() {
 	}
 }
 
+function pass() {
+	return true;
+}
+
+function createFood(n) {
+	for (var i = 0; i < n; i++)
+	{
+		randomX = Math.floor((Math.random() * game.world.width));
+		randomY = Math.floor((Math.random() * game.world.height));
+		foodPool.create(randomX, randomY, 'food');
+		console.log(randomX, randomY, i);
+	}
+	game.physics.enable(foodPool, Phaser.Physics.ARCADE);
+	
+}
+
+function eat(head, food) {
+	//console.log('food');
+	food.kill();
+	snakeGrow();
+	createFood(1)
+
+}
+
+function snakeGrow() {
+	numSnakeSections++;
+	//console.log(numSnakeSections, numSnakeSections*snakeSpacer);
+	snakeSection[numSnakeSections] = game.add.sprite(snakePath[numSnakeSections*snakeSpacer].x, snakePath[numSnakeSections*snakeSpacer].y, 'body_s');
+	snakeSection[numSnakeSections].scale.setTo(scaleX,scaleY);
+    snakeSection[numSnakeSections].anchor.setTo(0.5, 0.5);
+}
+	
 function moveHead() {
 	var angle = ((Math.PI*2)*snakeHead.angle)/360;
 	snakeHead.x += speed*Math.cos(angle);
@@ -86,7 +123,7 @@ function moveBody() {
 	var part = snakePath.pop();
 	part.setTo(snakeHead.x, snakeHead.y);
 	snakePath.unshift(part);
-	for (var i = 1; i <= numSnakeSections - 1; i++)
+	for (var i = 0; i <= numSnakeSections; i++)
 	{
 		snakeSection[i].x = snakePath[i*snakeSpacer].x;
 		snakeSection[i].y = snakePath[i*snakeSpacer].y;
@@ -109,7 +146,7 @@ function killSnake(){
 	{
 		game.camera.follow(null);
 	}
-	for (var i = 1; i <= numSnakeSections-1; i++)
+	for (var i = 0; i <= numSnakeSections; i++)
 	{
 		snakeSection[i].kill();
 	}
