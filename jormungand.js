@@ -33,7 +33,6 @@ var n = 0;
 //0.3/  4 /  3 / 3 / 2
 
 function create() {
-	
     game.physics.startSystem(Phaser.Physics.ARCADE);
     //game.world.setBounds(0, 0, 600, 600);
 	game.world.setBounds(0, 0, 2400, 1800);
@@ -65,6 +64,8 @@ function create() {
 	foodPool = game.add.group();
 	createFood(startingFood);
 	snakeHead.bringToTop();
+	
+	button = game.add.button(game.world.centerX, game.world.centerY, 'food', actionOnClick, this);
 }
 
 function update() {
@@ -104,6 +105,12 @@ function update() {
 		checkDeath();
 		n++
 	}
+}
+
+function actionOnClick () {
+
+    game.scale.startFullScreen();
+
 }
 
 function pass() {
